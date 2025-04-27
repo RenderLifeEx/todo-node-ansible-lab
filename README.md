@@ -34,7 +34,7 @@ Backend API для Todo приложения на Node.js с Express и TypeScri
 git clone git@github.com:RenderLifeEx/todo-node-ansible-lab.git
 cd todo-node-ansible-lab
 pnpm install
-npm run start
+pnpm run start
 ```
 
 ### Сборка production-версии
