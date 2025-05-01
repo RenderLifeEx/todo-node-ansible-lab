@@ -10,6 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Start Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.MN_TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            ============= 🛠️ Backend ===============
+            ♻️ Сейчас будут выкачены новые изменения
+
       - name: Git clone repository
         uses: actions/checkout@v2
 
@@ -24,8 +33,8 @@ jobs:
       - name: Install dependencies with Yarn
         run: yarn install
 
-      - name: Build admin panel
-        run: NODE_ENV=production yarn build
+      - name: Compile ts to js
+        run: pnpm run build
 
       - name: Create BZIP deployment package
         run: tar -cjf app.tar.bz2 ./*
@@ -37,7 +46,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: app.tar.bz2
+          source: appBackend.tar.bz2
           target: ~/uploads/
 
       - name: Deploy
@@ -48,34 +57,34 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/back/
+            cd ~/backend/
             kill -9 $(lsof -t -i:1337)
 
             # Удаляет все кроме папки node_modules и public
-            ls | grep -v "\(node_modules\|public\)" | xargs rm -rfv
+            ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
 
             # Распаковка и удаление архива
-            tar -C ./ -xjf ~/uploads/app.tar.bz2 --strip-components 1
-            rm -rf ~/uploads/app.tar.bz2
+            tar -C ./ -xjf ~/uploads/appBackend.tar.bz2 --strip-components 1
+            rm -rf ~/uploads/appBackend.tar.bz2
 
-            // Копирование конфига базы данных
-            cp config/database.example.js config/database.js
+            # Если нет todos.js, копируем из примера
+            if [ ! -f "db/todos.json" ]; then
+              cp db/todos.example.json db/todos.js
+              echo "✅ Файл db/todos.json создан из примера"
+            else
+              echo "🔹 Файл db/todos.json уже существует, копирование не требуется"
+            fi
 
             // Установка зависимостей
-            yarn install
+            pnpm install
 
             # Имя процесса из ecosystem.config.js
-            APP_NAME="is-salary"
-
-            # Поиск расположения pm2
-            whereis pm2
-
-            # Остановка и удаление процесса
-            ~/.nvm/versions/node/v10.19.0/bin/pm2 stop $APP_NAME || true
-            ~/.nvm/versions/node/v10.19.0/bin/pm2 delete $APP_NAME || true
+            APP_NAME="todo-backend"
+            pm2 stop $APP_NAME || true
+            pm2 delete $APP_NAME || true
 
             # Запуск процесса
-            ~/.nvm/versions/node/v10.19.0/bin/pm2 start ~/back/ecosystem.config.js --env production
+            pm2 start ~/backend/ecosystem.config.js --env production
 
       - name: Success Notification
         uses: appleboy/telegram-action@master
