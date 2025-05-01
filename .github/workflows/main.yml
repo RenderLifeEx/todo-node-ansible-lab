@@ -85,8 +85,14 @@ jobs:
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"
-            pm2 stop $APP_NAME || true
-            pm2 delete $APP_NAME || true
+
+            # Удаление старого процесса
+            if pm2 list | grep -q $APP_NAME; then
+              pm2 stop $APP_NAME
+              pm2 delete $APP_NAME
+            else
+              echo "Process $APP_NAME not found, skipping..."
+            fi
 
             # Запуск процесса
             pm2 start ~/backend/ecosystem.config.js --env production
