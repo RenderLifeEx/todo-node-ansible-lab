@@ -8,7 +8,7 @@ const PORT = 3001;
 //const FRONT_PORT = 3001;
 
 app.use(bodyParser.json());
-app.use("/api/todos", todoRoutes);
+app.use("/todos", todoRoutes);
 
 // app.use(cors({
 //     origin: `http://localhost:${FRONT_PORT}`,
