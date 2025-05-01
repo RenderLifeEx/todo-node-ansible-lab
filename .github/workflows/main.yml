@@ -30,7 +30,10 @@ jobs:
       - name: List
         run: ls
 
-      - name: Install dependencies with Pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies with pnpm
         run: pnpm install
 
       - name: Compile ts to js
