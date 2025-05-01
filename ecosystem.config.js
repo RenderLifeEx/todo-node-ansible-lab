@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'todo-backend',
-      script: 'npm',
+      script: 'pnpm',
       args: 'start',
       env: {
         NODE_ENV: 'development',

@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/backend/
+            cd /var/www/renderlife/backend/
             kill -9 $(lsof -t -i:1337)
 
             # Удаляет все кроме папки node_modules и public
