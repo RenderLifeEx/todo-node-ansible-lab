@@ -22,10 +22,12 @@ jobs:
       - name: Git clone repository
         uses: actions/checkout@v2
 
-      - name: Node install
-        uses: actions/setup-node@v2
+      # Установка Node.js 20.x (LTS)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "lts/fermium"
+          node-version: 'lts/iron'
+          cache: 'pnpm'
 
       - name: List
         run: ls
