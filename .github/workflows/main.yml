@@ -1,0 +1,99 @@
+name: Deploy to production server
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git clone repository
+        uses: actions/checkout@v2
+
+      - name: Node install
+        uses: actions/setup-node@v2
+        with:
+          node-version: "lts/fermium"
+
+      - name: List
+        run: ls
+
+      - name: Install dependencies with Yarn
+        run: yarn install
+
+      - name: Build admin panel
+        run: NODE_ENV=production yarn build
+
+      - name: Create BZIP deployment package
+        run: tar -cjf app.tar.bz2 ./*
+
+      - name: Copy file to serve
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: app.tar.bz2
+          target: ~/uploads/
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/back/
+            kill -9 $(lsof -t -i:1337)
+
+            # Удаляет все кроме папки node_modules и public
+            ls | grep -v "\(node_modules\|public\)" | xargs rm -rfv
+
+            # Распаковка и удаление архива
+            tar -C ./ -xjf ~/uploads/app.tar.bz2 --strip-components 1
+            rm -rf ~/uploads/app.tar.bz2
+
+            // Копирование конфига базы данных
+            cp config/database.example.js config/database.js
+
+            // Установка зависимостей
+            yarn install
+
+            # Имя процесса из ecosystem.config.js
+            APP_NAME="is-salary"
+
+            # Поиск расположения pm2
+            whereis pm2
+
+            # Остановка и удаление процесса
+            ~/.nvm/versions/node/v10.19.0/bin/pm2 stop $APP_NAME || true
+            ~/.nvm/versions/node/v10.19.0/bin/pm2 delete $APP_NAME || true
+
+            # Запуск процесса
+            ~/.nvm/versions/node/v10.19.0/bin/pm2 start ~/back/ecosystem.config.js --env production
+
+      - name: Success Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.MN_TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            🎉 Деплой приложения «jQuery Todo - 🛠️ Backend
+            на сервер Мечты успешно завершен.
+            Название коммита: ${{ github.event.commits[0].message }}
+
+      - name: Failed Notification
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.MN_TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            🔥 Деплой приложения «jQuery Todo - 🛠️ Backend
+            на сервер Мечты завершен неудачей.
+            Название коммита: ${{ github.event.commits[0].message }}
