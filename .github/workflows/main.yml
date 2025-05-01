@@ -95,7 +95,7 @@ jobs:
             fi
 
             # Запуск процесса
-            pm2 start ~/backend/ecosystem.config.js --env production
+            pm2 start /var/www/renderlife/backend/ecosystem.config.js --env production
 
       - name: Success Notification
         uses: appleboy/telegram-action@master
