@@ -20,11 +20,11 @@ jobs:
             ♻️ Сейчас будут выкачены новые изменения
 
       - name: Git clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Установка Node.js 20.x (LTS)
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
         with:
           node-version: 'lts/iron'
           cache: 'pnpm'
