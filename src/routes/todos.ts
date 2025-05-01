@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 const router = Router();
-const dbPath = path.join(__dirname, "../db/todos.json");
+const dbPath = path.join(__dirname, "../../db/todos.json");
 
 function readDB() {
     const data = fs.readFileSync(dbPath, "utf-8");
