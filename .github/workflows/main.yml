@@ -29,9 +29,6 @@ jobs:
           node-version: 'lts/iron'
           cache: 'pnpm'
 
-      - name: List
-        run: ls
-
       - name: Install pnpm
         run: npm install -g pnpm
 
@@ -74,7 +71,7 @@ jobs:
 
             # Если нет todos.js, копируем из примера
             if [ ! -f "db/todos.json" ]; then
-              cp db/todos.example.json db/todos.js
+              cp db/todos.example.json db/todos.json
               echo "✅ Файл db/todos.json создан из примера"
             else
               echo "🔹 Файл db/todos.json уже существует, копирование не требуется"
