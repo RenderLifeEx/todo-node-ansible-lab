@@ -16,8 +16,9 @@ jobs:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
           message: |
-            ============= 🛠️ Backend ===============
+            —————————————
             ♻️ Сейчас будут выкачены новые изменения
+            🛠️ Backend
 
       - name: Git clone repository
         uses: actions/checkout@v4
@@ -59,7 +60,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /var/www/renderlife/backend/
+            cd /var/www/${{ secrets.BACKEND_FOLDER }}
             kill -9 $(lsof -t -i:1337)
 
             # Удаляет все кроме папки node_modules и public
@@ -92,7 +93,7 @@ jobs:
             fi
 
             # Запуск процесса
-            pm2 start /var/www/renderlife/backend/ecosystem.config.js --env production
+            pm2 start /var/www/${{ secrets.BACKEND_FOLDER }}/ecosystem.config.js --env production
 
       - name: Success Notification
         uses: appleboy/telegram-action@master
@@ -100,8 +101,10 @@ jobs:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
           message: |
-            🎉 Деплой приложения «jQuery Todo - 🛠️ Backend
-            на сервер Мечты успешно завершен.
+            *✅ Деплой успешно завершен*
+            *🌍 Сервер:* Мечта
+            *📱 Приложение:* «jQuery Todo»
+            *🛠️ Тип:* Backend
             Название коммита: ${{ github.event.commits[0].message }}
 
       - name: Failed Notification
@@ -111,6 +114,7 @@ jobs:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
           message: |
-            🔥 Деплой приложения «jQuery Todo - 🛠️ Backend
-            на сервер Мечты завершен неудачей.
-            Название коммита: ${{ github.event.commits[0].message }}
+            *❌ Деплой завершен неудачей*
+            - 🌍 Сервер: Мечта
+            - 📱 Приложение: «jQuery Todo»
+            - 🛠️ Тип: Backend
