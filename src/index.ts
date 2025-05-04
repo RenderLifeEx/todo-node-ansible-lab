@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 //const FRONT_PORT = 3001;
 
 app.use(bodyParser.json());
