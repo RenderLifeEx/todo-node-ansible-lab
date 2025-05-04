@@ -16,9 +16,9 @@ jobs:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
           message: |
-            —————————————
-            ♻️ Сейчас будут выкачены новые изменения
-            🛠️ Backend
+            ♻️ Сейчас будут выкачены
+            новые изменения
+            🛠️ Backend - «jQuery Todo»
 
       - name: Git clone repository
         uses: actions/checkout@v4
