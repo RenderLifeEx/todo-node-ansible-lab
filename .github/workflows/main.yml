@@ -15,6 +15,7 @@ jobs:
         with:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
+          format: markdown
           message: |
             ♻️ Сейчас будут выкачены
             новые изменения
@@ -100,6 +101,7 @@ jobs:
         with:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
+          format: markdown
           message: |
             *✅ Деплой успешно завершен*
             *🌍 Сервер:* Мечта
@@ -113,6 +115,7 @@ jobs:
         with:
           to: ${{ secrets.MN_TG_CHAT_ID }}
           token: ${{ secrets.TG_BOT_TOKEN }}
+          format: markdown
           message: |
             *❌ Деплой завершен неудачей*
             - 🌍 Сервер: Мечта
