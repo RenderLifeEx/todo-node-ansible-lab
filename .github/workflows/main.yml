@@ -108,7 +108,8 @@ jobs:
             *🌍 Сервер:* Мечта
             *📱 Приложение:* «jQuery Todo»
             *🛠️ Тип:* Backend
-            Название коммита: ||${{ github.event.commits[0].message }}||
+            ||spoiler||
+            ||Название коммита: ${{ github.event.commits[0].message }}||
 
       - name: Failed Notification
         if: ${{ failure() }}
