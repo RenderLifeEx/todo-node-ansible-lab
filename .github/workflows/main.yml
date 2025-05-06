@@ -17,9 +17,10 @@ jobs:
           token: ${{ secrets.TG_BOT_TOKEN }}
           format: markdown
           message: |
-            ♻️ Сейчас будут выкачены
-            новые изменения
-            🛠️ Backend - «jQuery Todo»
+            *♻️ Деплой запущен*
+            *🌍 Сервер:* Мечта
+            *📱 Приложение:* «jQuery Todo»
+            *🛠️ Тип:* Backend
 
       - name: Git clone repository
         uses: actions/checkout@v4
@@ -107,7 +108,7 @@ jobs:
             *🌍 Сервер:* Мечта
             *📱 Приложение:* «jQuery Todo»
             *🛠️ Тип:* Backend
-            Название коммита: ${{ github.event.commits[0].message }}
+            Название коммита: ||${{ github.event.commits[0].message }}||
 
       - name: Failed Notification
         if: ${{ failure() }}
@@ -118,6 +119,7 @@ jobs:
           format: markdown
           message: |
             *❌ Деплой завершен неудачей*
-            - 🌍 Сервер: Мечта
-            - 📱 Приложение: «jQuery Todo»
-            - 🛠️ Тип: Backend
+            *🌍 Сервер:* Мечта
+            *📱 Приложение:* «jQuery Todo»
+            *🛠️ Тип:* Backend
+            Название коммита: ||${{ github.event.commits[0].message }}||
