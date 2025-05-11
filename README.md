@@ -46,7 +46,8 @@ cp .env.development.local .env
 docker-compose up -d
 
 # Накатываем миграции
-pnpm run migrate
+pnpm run migrate:push
+pnpm run migrate:push-new
 
 # Также можно залить тестовые данные *
 pnpm run seed
