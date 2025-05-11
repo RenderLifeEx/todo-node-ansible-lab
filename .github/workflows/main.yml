@@ -78,11 +78,14 @@ jobs:
               echo "✅ .env создан из dev версии"
             fi
 
-            # Применение миграций
-            pnpm run migrate
-
             # Установка зависимостей
             pnpm install
+
+            # Создание контейнера
+            docker-compose up -d
+
+            # Применение миграций
+            pnpm run migrate
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"
