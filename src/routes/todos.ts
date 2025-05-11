@@ -1,64 +1,127 @@
 import { Router } from "express";
-import fs from "fs";
-import path from "path";
 
+import { db } from "../drizzle/db";
+import { todos } from "../drizzle/schema";
+import { eq, asc, desc, gt, lt, and } from "drizzle-orm";
+
+const STEP = 500; // Шаг для перемещения задач
 const router = Router();
-const dbPath = path.join(__dirname, "../../db/todos.json");
 
-function readDB() {
-    const data = fs.readFileSync(dbPath, "utf-8");
-    return JSON.parse(data);
-}
+router.get("/", async (_, res) => {
+    // Старый способ (пока работает)
+    //const result = await db.select().from(todos).orderBy(todos.id);
 
-function writeDB(data: any) {
-    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
-}
-
-router.get("/", (req, res) => {
-    const todos = readDB();
-    res.json(todos);
+    // Новый способ (рекомендуется)
+    const result = await db.query.todos.findMany({
+        orderBy: (todos, { desc }) => [asc(todos.completed), desc(todos.position), desc(todos.id)],
+    });
+    res.json(result);
 });
 
-router.post("/", (req, res) => {
-    const todos = readDB();
-    const newTodo = { id: Date.now(), ...req.body };
-    todos.push(newTodo);
-    writeDB(todos);
-    res.status(201).json(newTodo);
+router.post("/", async (req, res) => {
+    // При создании ищем верхний элемент у которого самое большое число в поле position
+    const lastItem = await db
+        .select({ position: todos.position })
+        .from(todos)
+        .orderBy(desc(todos.position))
+        .limit(1);
+
+    // Стартовое значение STEP, а не 0, чтобы оставить место для вставки
+    const newPosition = lastItem[0]?.position
+        ? lastItem[0].position + STEP
+        : STEP;
+
+    const [newTodo] = await db
+        .insert(todos)
+        .values({
+            title: req.body.title,
+            position: newPosition,
+        })
+        .returning();
+
+    res.json(newTodo);
 });
 
-router.put("/:id", (req, res) => {
-    const todos = readDB();
-    const index = todos.findIndex((t: any) => t.id === +req.params.id);
-    if (index === -1) return res.sendStatus(404);
-    todos[index] = { ...todos[index], ...req.body };
-    writeDB(todos);
-    res.json(todos[index]);
+router.put("/:id", async (req, res) => {
+    const [updated] = await db
+        .update(todos)
+        .set(req.body)
+        .where(eq(todos.id, +req.params.id))
+        .returning();
+    res.json(updated);
 });
 
-router.delete("/:id", (req, res) => {
-    const todos = readDB();
-    const filtered = todos.filter((t: any) => t.id !== +req.params.id);
-    writeDB(filtered);
+router.delete("/:id", async (req, res) => {
+    await db.delete(todos).where(eq(todos.id, +req.params.id));
     res.sendStatus(204);
 });
 
-router.post("/reorder", (req, res) => {
-    const { test, ids } = req.body; // массив ID в новом порядке
+router.post("/reorder", async (req, res) => {
+    try {
+        const { movedId, beforeId } = req.body;
 
-    if (!Array.isArray(ids)) return res.status(400).send("Invalid format");
+        // Получаем задачу, которую переместили
+        const movedTodo = await db.query.todos.findFirst({
+            where: (todos, { eq }) => eq(todos.id, movedId),
+        });
 
-    const todos = readDB();
-    const todosById = Object.fromEntries(todos.map((t: any) => [t.id, t]));
+        if (!movedTodo) {
+            return res.status(404).json({ error: "Moved todo not found" });
+        }
 
-    const reordered = ids.map((id: number) => todosById[id]).filter(Boolean);
+        let newPosition: number;
 
-    if (reordered.length !== todos.length) {
-        return res.status(400).send("Reorder list doesn't match todos");
+        if (beforeId === null) {
+            // Переместили в самый конец
+            const last = await db
+                .select({ position: todos.position })
+                .from(todos)
+                .orderBy(asc(todos.position))
+                .limit(1);
+
+            const lastPosition = last[0].position ?? 0;
+            newPosition = lastPosition - STEP;
+        } else {
+            // Получаем элемент, перед которым вставляем перемещаемый
+            const beforeTodo = await db.query.todos.findFirst({
+                where: (todos, { eq }) => eq(todos.id, beforeId),
+            });
+
+            if (!beforeTodo) {
+                return res.status(404).json({ error: "Before todo not found" });
+            }
+
+            const beforeTodoPosition = beforeTodo.position ?? 0;
+
+            // Получаем элемент, который будет стоять перед beforeTodo
+            const prevTodo = await db
+                .select()
+                .from(todos)
+                .where(
+                    and(
+                        gt(todos.position, beforeTodoPosition),
+                        lt(todos.completed, true) // дополнительное условие
+                    )
+                )
+                .orderBy(asc(todos.position))
+                .limit(1);
+
+            const prevPosition = prevTodo[0]?.position ?? beforeTodoPosition + (STEP * 2);
+
+            newPosition = (prevPosition + beforeTodoPosition) / 2;
+        }
+
+        // Обновляем позицию перемещённой задачи
+        await db
+            .update(todos)
+            .set({ position: newPosition })
+            .where(eq(todos.id, movedId));
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Reorder error:", error);
+        res.status(STEP).json({ error: "Internal server error" });
     }
-
-    writeDB(reordered);
-    res.json(reordered);
 });
 
 export default router;

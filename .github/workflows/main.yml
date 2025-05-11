@@ -72,13 +72,14 @@ jobs:
             tar -C ./ -xjf ~/uploads/appBackend.tar.bz2 --strip-components 1
             rm -rf ~/uploads/appBackend.tar.bz2
 
-            # Если нет todos.js, копируем из примера
-            if [ ! -f "db/todos.json" ]; then
-              cp db/todos.example.json db/todos.json
-              echo "✅ Файл db/todos.json создан из примера"
-            else
-              echo "🔹 Файл db/todos.json уже существует, копирование не требуется"
+            # Копирование .env если отсутствует
+            if [ ! -f ".env" ]; then
+              cp .env.development.local .env
+              echo "✅ .env создан из dev версии"
             fi
+
+            # Применение миграций
+            pnpm run migrate
 
             # Установка зависимостей
             pnpm install

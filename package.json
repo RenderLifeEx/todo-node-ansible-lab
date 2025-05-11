@@ -6,17 +6,27 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "seed": "tsx src/drizzle/seed.ts",
+    "seed:clear": "tsx src/drizzle/seed.ts --clear",
+    "migrate:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "migrate:push": "drizzle-kit push",
+    "migrate:push-new": "drizzle-kit migrate --config ./drizzle.config.ts"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.43.1",
+    "express": "^4.18.2",
+    "pg": "^8.15.6",
+    "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.17",
+    "drizzle-kit": "^0.31.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.4"
   },
