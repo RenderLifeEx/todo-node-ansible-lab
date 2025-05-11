@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import { db } from "../db";
-import { todos } from "../schema";
+import { db } from "../db/db";
+import { todos } from "../db/schema";
 import { eq, asc, desc, gt, lt, and } from "drizzle-orm";
 
 const STEP = 500; // Шаг для перемещения задач
