@@ -1,5 +1,5 @@
 import { db, closeConnection } from "./db";
-import { todos } from "./schema";
+import { todos } from ".//schema";
 import { eq } from "drizzle-orm";
 
 async function seed() {

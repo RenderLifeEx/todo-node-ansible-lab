@@ -4,5 +4,6 @@ export const todos = pgTable("todos", {
     id: serial("id").primaryKey(),
     title: text("title").notNull(),
     completed: boolean("completed").default(false),
-    position: doublePrecision()
+    position: doublePrecision(),
+    desc: text("desc").default(''),
 });

@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import { db } from "../drizzle/db";
-import { todos } from "../drizzle/schema";
+import { db } from "../db";
+import { todos } from "../schema";
 import { eq, asc, desc, gt, lt, and } from "drizzle-orm";
 
 const STEP = 500; // Шаг для перемещения задач
@@ -13,7 +13,7 @@ router.get("/", async (_, res) => {
 
     // Новый способ (рекомендуется)
     const result = await db.query.todos.findMany({
-        orderBy: (todos, { desc }) => [asc(todos.completed), desc(todos.position), desc(todos.id)],
+        orderBy: (todos, { desc }) => [desc(todos.position), desc(todos.id)],
     });
     res.json(result);
 });

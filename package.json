@@ -9,26 +9,28 @@
     "build": "tsc",
     "seed": "tsx src/drizzle/seed.ts",
     "seed:clear": "tsx src/drizzle/seed.ts --clear",
-    "migrate:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "migrate": "drizzle-kit migrate",
     "migrate:push": "drizzle-kit push",
-    "migrate:push-new": "drizzle-kit migrate --config ./drizzle.config.ts"
+    "migrate:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "pg": "^8.15.6",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.17",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^4.17.21",
+    "@types/pg": "^8.15.1",
     "drizzle-kit": "^0.31.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4"
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   },
   "author": "Renderlife",
   "license": "ISC"
