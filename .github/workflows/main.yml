@@ -84,7 +84,7 @@ jobs:
             pnpm install
 
             # Создание контейнера
-            docker compose up -d
+            # docker compose up -d
 
             # Применение миграций-
             pnpm run migrate
@@ -102,6 +102,7 @@ jobs:
 
             # Запуск процесса
             pm2 start /var/www/${{ secrets.BACKEND_FOLDER }}/ecosystem.config.js --env production
+            pm2 start ecosystem.config.js --env production
 
       - name: Success Notification
         uses: appleboy/telegram-action@master
