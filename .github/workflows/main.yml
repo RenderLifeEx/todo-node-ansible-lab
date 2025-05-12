@@ -40,7 +40,7 @@ jobs:
           source: appBackend.tar.bz2
           target: ~/uploads/
 
-      - name: Deploy v2
+      - name: Deploy v3
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
