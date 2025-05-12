@@ -72,7 +72,7 @@ jobs:
 
             # Распаковка и удаление архива
             tar -C ./ -xjf ~/uploads/appBackend.tar.bz2 --strip-components 1
-            rm -rf ~/uploads/appBackend.tar.bz2
+            # rm -rf ~/uploads/appBackend.tar.bz2
 
             # Копирование .env если отсутствует
             if [ ! -f ".env" ]; then
