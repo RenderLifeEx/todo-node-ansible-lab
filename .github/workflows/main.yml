@@ -84,7 +84,7 @@ jobs:
             pnpm install
 
             # Создание контейнера
-            docker-compose up -d
+            docker compose up -d
 
             # Применение миграций-
             pnpm run migrate

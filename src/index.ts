@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3001;
 
 // Проверяем, что находимся в режиме разработки
 const isDev = process.env.NODE_ENV === "development";
