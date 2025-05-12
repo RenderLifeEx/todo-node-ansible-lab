@@ -2,9 +2,9 @@
   "name": "todo-app",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "build": "tsc",
     "seed": "tsx src/drizzle/seed.ts",
