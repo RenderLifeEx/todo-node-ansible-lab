@@ -90,7 +90,7 @@ jobs:
             echo "Using npm version: $(npm -v)"
 
             # Установка зависимостей
-            pnpm install
+            pnpm install --force
 
             # Компиляция ts в js
             pnpm run build

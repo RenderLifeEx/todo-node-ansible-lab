@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
         // Отправляем лог в сервис логирования
         await axios.get(LOGGER_SERVICE_URL, {
             params: {
-                message: `Created new todo: ${req.body.title}`,
+                message: `🚀 Created new todo: ${req.body.title}`,
                 level: 'info'
             }
         });
