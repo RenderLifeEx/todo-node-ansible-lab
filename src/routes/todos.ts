@@ -67,8 +67,8 @@ router.post("/", async (req, res) => {
                 message: `Failed to create todo: ${errorMessage}`,
                 level: 'error'
             }
-        }).catch(e => {
-            console.error('Failed to send error log:', e);
+        }).catch((e: Error) => {
+            console.error('Failed to send error log:', e.message);
         });
 
         res.status(500).json({
