@@ -1,4 +1,5 @@
 import { Router } from "express";
+import axios from 'axios';
 
 import { db } from "../db/db";
 import { todos } from "../db/schema";
@@ -6,6 +7,7 @@ import { eq, asc, desc, gt, lt, and } from "drizzle-orm";
 
 const STEP = 500; // Шаг для перемещения задач
 const router = Router();
+const LOGGER_SERVICE_URL = 'https://logger-old-node.renderlife.ru/api/log';
 
 router.get("/", async (_, res) => {
     // Старый способ (пока работает)
@@ -19,27 +21,62 @@ router.get("/", async (_, res) => {
 });
 
 router.post("/", async (req, res) => {
-    // При создании ищем верхний элемент у которого самое большое число в поле position
-    const lastItem = await db
-        .select({ position: todos.position })
-        .from(todos)
-        .orderBy(desc(todos.position))
-        .limit(1);
+    try {
+        // При создании ищем верхний элемент у которого самое большое число в поле position
+        const lastItem = await db
+            .select({ position: todos.position })
+            .from(todos)
+            .orderBy(desc(todos.position))
+            .limit(1);
 
-    // Стартовое значение STEP, а не 0, чтобы оставить место для вставки
-    const newPosition = lastItem[0]?.position
-        ? lastItem[0].position + STEP
-        : STEP;
+        // Стартовое значение STEP, а не 0, чтобы оставить место для вставки
+        const newPosition = lastItem[0]?.position
+            ? lastItem[0].position + STEP
+            : STEP;
 
-    const [newTodo] = await db
-        .insert(todos)
-        .values({
-            title: req.body.title,
-            position: newPosition,
-        })
-        .returning();
+        const [newTodo] = await db
+            .insert(todos)
+            .values({
+                title: req.body.title,
+                position: newPosition,
+            })
+            .returning();
 
-    res.json(newTodo);
+        // Отправляем лог в сервис логирования
+        await axios.get(LOGGER_SERVICE_URL, {
+            params: {
+                message: `Created new todo: ${req.body.title}`,
+                level: 'info'
+            }
+        });
+
+        res.json(newTodo);
+    } catch (error: unknown) { // Явно указываем тип unknown
+        let errorMessage = "Unknown error occurred";
+
+        // Проверяем тип ошибки
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        } else if (typeof error === 'string') {
+            errorMessage = error;
+        }
+
+        // В случае ошибки тоже логируем
+        await axios.get(LOGGER_SERVICE_URL, {
+            params: {
+                message: `Failed to create todo: ${errorMessage}`,
+                level: 'error'
+            }
+        }).catch(e => {
+            console.error('Failed to send error log:', e);
+        });
+
+        res.status(500).json({
+            status: "error",
+            message: "Internal server error",
+            details: errorMessage
+        });
+    }
 });
 
 router.put("/:id", async (req, res) => {
