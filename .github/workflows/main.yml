@@ -48,7 +48,15 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /var/www/${{ secrets.BACKEND_FOLDER }}
+            TARGET_DIR="/var/www/${{ secrets.BACKEND_FOLDER }}"
+            NVM_DIR="/usr/local/nvm"
+
+            if [ ! -d "$TARGET_DIR" ]; then
+              echo "::error::Critical: Target directory $TARGET_DIR does not exist!"
+              exit 1
+            fi
+
+            cd $TARGET_DIR || exit 1
 
             # Удаляет все кроме папки node_modules и public
             ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
@@ -62,6 +70,24 @@ jobs:
               cp .env.development.local .env
               echo "✅ .env создан из dev версии"
             fi
+
+            # Загрузка NVM (ваша конфигурация)
+            export NVM_DIR="$NVM_DIR"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            # Проверка что NVM загрузился
+            if ! command -v nvm &> /dev/null; then
+              echo "::error::NVM not loaded properly!"
+              exit 1
+            fi
+
+            # Установка нужной версии Node.js
+            nvm install lts/iron
+            nvm use lts/iron
+
+            # Проверка версии Node.js
+            echo "Using Node.js version: $(node -v)"
+            echo "Using npm version: $(npm -v)"
 
             # Установка зависимостей
             pnpm install
