@@ -49,7 +49,6 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/${{ secrets.BACKEND_FOLDER }}
-            kill -9 $(lsof -t -i:1337)
 
             # Удаляет все кроме папки node_modules и public
             ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
