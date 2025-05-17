@@ -73,8 +73,11 @@ jobs:
             # Создание контейнера
             # docker compose up -d
 
-            # Применение миграций-
+            # Применение миграций
             pnpm run migrate
+
+            # Создание контента
+            # pnpm run seed
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"

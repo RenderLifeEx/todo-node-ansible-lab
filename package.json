@@ -7,8 +7,8 @@
     "start": "node dist/src/index.js",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "build": "tsc",
-    "seed": "tsx src/drizzle/seed.ts",
-    "seed:clear": "tsx src/drizzle/seed.ts --clear",
+    "seed": "tsx src/db/seed.ts",
+    "seed:clear": "tsx src/db/seed.ts --clear",
     "migrate": "drizzle-kit migrate",
     "migrate:push": "drizzle-kit push",
     "migrate:generate": "drizzle-kit generate"
