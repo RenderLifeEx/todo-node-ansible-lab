@@ -11,7 +11,8 @@
     "seed:clear": "tsx src/db/seed.ts --clear",
     "migrate": "drizzle-kit migrate",
     "migrate:push": "drizzle-kit push",
-    "migrate:generate": "drizzle-kit generate"
+    "migrate:generate": "drizzle-kit generate",
+    "studio": "drizzle-kit studio"
   },
   "dependencies": {
     "axios": "^1.9.0",
