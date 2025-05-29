@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - stage_1
     tags:
       - '**-prod**'
 
@@ -27,24 +28,8 @@ jobs:
       - name: Git clone repository
         uses: actions/checkout@v4
 
-      # Установка Node.js 20.x (LTS)
-      - name: Setup Node.js
-        uses: actions/checkout@v4
-        with:
-          node-version: 'lts/iron'
-          cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies with pnpm
-        run: pnpm install
-
-      - name: Compile ts to js
-        run: pnpm run build
-
       - name: Create BZIP deployment package
-        run: tar -cjf appBackend.tar.bz2 ./*
+        run: tar -cjf appBackend.tar.bz2 .env.development.local ./*
 
       - name: Copy file to serve
         uses: appleboy/scp-action@master
@@ -56,7 +41,7 @@ jobs:
           source: appBackend.tar.bz2
           target: ~/uploads/
 
-      - name: Deploy
+      - name: Deploy v3
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -64,26 +49,61 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /var/www/${{ secrets.BACKEND_FOLDER }}
-            kill -9 $(lsof -t -i:1337)
+            TARGET_DIR="/var/www/${{ secrets.BACKEND_FOLDER }}"
+            NVM_DIR="/usr/local/nvm"
 
-            # Удаляет все кроме папки node_modules и public
-            ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
-
-            # Распаковка и удаление архива
-            tar -C ./ -xjf ~/uploads/appBackend.tar.bz2 --strip-components 1
-            rm -rf ~/uploads/appBackend.tar.bz2
-
-            # Если нет todos.js, копируем из примера
-            if [ ! -f "db/todos.json" ]; then
-              cp db/todos.example.json db/todos.json
-              echo "✅ Файл db/todos.json создан из примера"
-            else
-              echo "🔹 Файл db/todos.json уже существует, копирование не требуется"
+            if [ ! -d "$TARGET_DIR" ]; then
+              echo "::error::Critical: Target directory $TARGET_DIR does not exist!"
+              exit 1
             fi
 
+            cd $TARGET_DIR || exit 1
+
+            # Удаляет все кроме папки node_modules и public
+            ls | grep -v "\(node_modules\|db\|drizzle\)" | xargs rm -rfv
+
+            # Распаковка и удаление архива
+            tar -C ./ -xjf ~/uploads/appBackend.tar.bz2
+            rm -rf ~/uploads/appBackend.tar.bz2
+
+            # Копирование .env если отсутствует
+            if [ ! -f ".env" ]; then
+              cp .env.development.local .env
+              echo "✅ .env создан из dev версии"
+            fi
+
+            # Загрузка NVM (ваша конфигурация)
+            export NVM_DIR="$NVM_DIR"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            # Проверка что NVM загрузился
+            if ! command -v nvm &> /dev/null; then
+              echo "::error::NVM not loaded properly!"
+              exit 1
+            fi
+
+            # Установка нужной версии Node.js
+            nvm install lts/iron
+            nvm use lts/iron
+
+            # Проверка версии Node.js
+            echo "Using Node.js version: $(node -v)"
+            echo "Using npm version: $(npm -v)"
+
             # Установка зависимостей
-            pnpm install
+            pnpm install --force
+
+            # Компиляция ts в js
+            pnpm run build
+
+            # Создание контейнера
+            docker compose up -d
+
+            # Применение миграций
+            pnpm run migrate
+
+            # Создание контента
+            pnpm run seed
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"
@@ -97,7 +117,8 @@ jobs:
             fi
 
             # Запуск процесса
-            pm2 start /var/www/${{ secrets.BACKEND_FOLDER }}/ecosystem.config.js --env production
+            pm2 start ecosystem.config.js --env production
+            pm2 save
 
       - name: Success Notification
         uses: appleboy/telegram-action@master
