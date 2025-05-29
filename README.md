@@ -48,6 +48,9 @@ docker-compose up -d
 # Накатываем миграции, но если ранее уже был создан контейнер то нужно не забыть удалять volume
 pnpm run migrate
 
+# Просмотр базы
+pnpm run studio
+
 # Также можно залить тестовые данные *
 pnpm run seed
 

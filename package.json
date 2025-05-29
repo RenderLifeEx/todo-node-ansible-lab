@@ -12,7 +12,7 @@
     "migrate": "drizzle-kit migrate",
     "migrate:push": "drizzle-kit push",
     "migrate:generate": "drizzle-kit generate",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio --port=3003"
   },
   "dependencies": {
     "axios": "^1.9.0",
