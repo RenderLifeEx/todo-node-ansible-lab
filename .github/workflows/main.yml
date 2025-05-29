@@ -97,7 +97,7 @@ jobs:
             pnpm run build
 
             # Создание контейнера
-            docker compose up -d
+            docker compose -p todoapp up -d
 
             # Применение миграций
             pnpm run migrate
