@@ -59,7 +59,7 @@ jobs:
             cd $TARGET_DIR || exit 1
 
             # Удаляет все кроме папки node_modules и public
-            ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
+            ls | grep -v "\(node_modules\|db\|drizzle\)" | xargs rm -rfv
 
             # Распаковка и удаление архива
             tar -C ./ -xjf ~/uploads/appBackend.tar.bz2
@@ -102,7 +102,7 @@ jobs:
             pnpm run migrate
 
             # Создание контента
-            # pnpm run seed
+            pnpm run seed
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"
