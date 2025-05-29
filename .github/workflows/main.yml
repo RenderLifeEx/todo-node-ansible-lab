@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - stage_1
     tags:
       - '**-prod**'
 
