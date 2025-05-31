@@ -112,10 +112,12 @@ jobs:
             done
 
             # Применение миграций
-            pnpm run migrate
+            # echo "⚠️ Применение миграций"
+            # pnpm run migrate
 
             # Создание контента
-            pnpm run seed
+            # echo "⚠️ Добавление начальных тестовых данных"
+            # pnpm run seed
 
             # Имя процесса из ecosystem.config.js
             APP_NAME="todo-backend"
