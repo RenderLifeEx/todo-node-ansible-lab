@@ -99,6 +99,18 @@ jobs:
             # Создание контейнера
             docker compose -p todoapp up -d
 
+            # Ожидание готовности PostgreSQL
+            echo "Waiting for PostgreSQL to become ready..."
+            for i in {1..10}; do
+              if docker exec todo-postgres pg_isready -U postgres; then
+                echo "PostgreSQL is ready!"
+                break
+              else
+                echo "PostgreSQL not ready yet, attempt $i/10..."
+                sleep 3
+              fi
+            done
+
             # Применение миграций
             pnpm run migrate
 
