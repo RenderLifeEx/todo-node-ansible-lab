@@ -72,8 +72,8 @@ jobs:
               echo "❇️ Process $APP_NAME not found, skipping..."
             fi
 
-            # Удаляет все кроме папки node_modules и public
-            ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
+            # Удаляет все кроме папки node_modules
+            ls | grep -v "\(node_modules\)" | xargs rm -rfv
 
             # Распаковка и удаление архива
             tar -C ./ -xjf ~/uploads/appBackend.tar.bz2
