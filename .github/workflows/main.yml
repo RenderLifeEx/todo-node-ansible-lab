@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - stage_1
+      - parser
     tags:
       - '**-prod**'
 

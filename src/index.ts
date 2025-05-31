@@ -1,7 +1,11 @@
 import express from "express";
 import todoRoutes from "./routes/todos";
-import bodyParser from "body-parser";
 import cors from "cors";
+import bodyParser from "body-parser";
+
+import axios from "axios";
+import cron from "node-cron";
+import { initProgramChecker } from "./services/programService";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,6 +23,8 @@ if (isDev) {
 app.use(bodyParser.json());
 app.use("/todos", todoRoutes);
 
+// Инициализация проверки программ
+initProgramChecker();
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
