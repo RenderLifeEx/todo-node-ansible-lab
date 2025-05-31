@@ -87,8 +87,8 @@ jobs:
             nvm use lts/iron
 
             # Проверка версии Node.js
-            echo "Using Node.js version: $(node -v)"
-            echo "Using npm version: $(npm -v)"
+            echo "❇️ Using Node.js version: $(node -v)"
+            echo "❇️ Using npm version: $(npm -v)"
 
             # Установка зависимостей
             pnpm install --force
@@ -100,13 +100,13 @@ jobs:
             docker compose -p todoapp up -d
 
             # Ожидание готовности PostgreSQL
-            echo "Waiting for PostgreSQL to become ready..."
+            echo "❇️ Waiting for PostgreSQL to become ready..."
             for i in {1..10}; do
               if docker exec todo-postgres pg_isready -U postgres; then
-                echo "PostgreSQL is ready!"
+                echo "✅ PostgreSQL is ready!"
                 break
               else
-                echo "PostgreSQL not ready yet, attempt $i/10..."
+                echo "❌ PostgreSQL not ready yet, attempt $i/10..."
                 sleep 3
               fi
             done
@@ -125,7 +125,7 @@ jobs:
               pm2 stop $APP_NAME
               pm2 delete $APP_NAME
             else
-              echo "Process $APP_NAME not found, skipping..."
+              echo "❇️ Process $APP_NAME not found, skipping..."
             fi
 
             # Запуск процесса
