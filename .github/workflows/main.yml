@@ -110,7 +110,7 @@ jobs:
             pnpm run build
 
             # Создание контейнера
-            docker compose -p todoapp up -d
+            #docker compose -p todoapp up -d
 
             # Ожидание готовности PostgreSQL
             echo "❇️ Waiting for PostgreSQL to become ready..."

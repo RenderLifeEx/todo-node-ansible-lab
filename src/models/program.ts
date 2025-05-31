@@ -45,9 +45,9 @@ export const programs: Program[] = [
         url: 'https://do.sirius.ru/program/1195-letnyaya-masterskaya-talantov-khraniteli',
         lastStatus: 'unavailable'
     },
-    // {
-    //     name: 'Тестовая программа',
-    //     url: 'https://todo-jq.renderlife.ru/sirius-navigator.html',
-    //     lastStatus: 'unavailable'
-    // }
+    {
+        name: 'Тестовая программа',
+        url: 'https://todo-jq.renderlife.ru/sirius-navigator.html',
+        lastStatus: 'unavailable'
+    }
 ];
