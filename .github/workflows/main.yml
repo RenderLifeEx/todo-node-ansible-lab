@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - stage_1
+      - stage_1 # postgres+drizzle+docker
     tags:
       - '**-prod**'
 
@@ -71,8 +71,8 @@ jobs:
               echo "❇️ Process $APP_NAME not found, skipping..."
             fi
 
-            # Удаляет все кроме папки node_modules и public
-            ls | grep -v "\(node_modules\|db\)" | xargs rm -rfv
+            # Удаляет все кроме папки node_modules
+            ls | grep -v "\(node_modules\)" | xargs rm -rfv
 
             # Распаковка и удаление архива
             tar -C ./ -xjf ~/uploads/appBackend.tar.bz2
@@ -109,7 +109,7 @@ jobs:
             pnpm run build
 
             # Создание контейнера
-            docker compose -p todoapp up -d
+            #docker compose -p todoapp up -d
 
             # Ожидание готовности PostgreSQL
             echo "❇️ Waiting for PostgreSQL to become ready..."
