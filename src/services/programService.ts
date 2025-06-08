@@ -25,26 +25,29 @@ async function checkProgramAvailability(program: Program): Promise<void> {
         }
     } catch (error) {
         const err = error as Error;
-        console.error(`Error checking program ${program.name}:`, err.message);
+        console.error(`Ошибка проверки программы - ${program.name}:`, err.message);
     }
 }
 
 async function checkAllPrograms(): Promise<void> {
-    console.log('Checking programs availability...');
     for (const program of programs) {
         await checkProgramAvailability(program);
         await new Promise(resolve => setTimeout(resolve, 3000)); // Задержка 3 секунд между запросами
     }
 }
 
-export function initProgramChecker(): void {
-    // Запускаем проверку сразу при старте
-    checkAllPrograms();
-
-    // Затем каждые 10 секунд
-    cron.schedule('*/30 * * * * *', () => {
+export function initProgramChecker(enable = false): void {
+    if (enable) {
+        // Запускаем проверку сразу при старте
         checkAllPrograms();
-    });
 
-    console.log('Program availability checker initialized');
+        // Затем каждые 10 секунд
+        cron.schedule('*/30 * * * * *', () => {
+            checkAllPrograms();
+        });
+
+        console.log('Проверка доступности программы для записи - включена');
+    } else {
+        console.log('Проверка выключена');
+    }
 }

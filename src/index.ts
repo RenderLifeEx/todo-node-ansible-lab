@@ -3,8 +3,6 @@ import todoRoutes from "./routes/todos";
 import cors from "cors";
 import bodyParser from "body-parser";
 
-import axios from "axios";
-import cron from "node-cron";
 import { initProgramChecker } from "./services/programService";
 
 const app = express();
@@ -23,7 +21,7 @@ if (isDev) {
 app.use(bodyParser.json());
 app.use("/todos", todoRoutes);
 
-// Инициализация проверки программ
+// Инициализация проверки учебных программ на сайте Навигатор Сириус
 initProgramChecker();
 
 app.listen(PORT, () => {

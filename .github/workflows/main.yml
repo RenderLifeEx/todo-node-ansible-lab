@@ -3,8 +3,7 @@ on:
   push:
     branches:
       - master
-      - stage_1
-      - parser
+      - stage_1 # postgres+drizzle+docker
     tags:
       - '**-prod**'
 
