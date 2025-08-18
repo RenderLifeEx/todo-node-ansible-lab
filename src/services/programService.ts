@@ -36,7 +36,7 @@ async function checkAllPrograms(): Promise<void> {
     }
 }
 
-export function initProgramChecker(enable = false): void {
+export function initProgramChecker(enable = true): void {
     if (enable) {
         // Запускаем проверку сразу при старте
         checkAllPrograms();
