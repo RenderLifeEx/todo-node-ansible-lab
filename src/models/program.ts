@@ -14,5 +14,15 @@ export const programs: Program[] = [
         name: 'Тестовая программа',
         url: 'https://todo-jq.renderlife.ru/sirius-navigator.html',
         lastStatus: 'unavailable'
+    },
+    {
+        name: 'Парусный спорт',
+        url: 'https://do.sirius-ft.ru/program/1303-parusnyi-sport-obshcherazvivayushchaya-programma',
+        lastStatus: 'unavailable'
+    },
+    {
+        name: 'Плавание',
+        url: 'https://do.sirius-ft.ru/program/1245-plavanie-obshcherazvivayushchaya-programma',
+        lastStatus: 'unavailable'
     }
 ];
