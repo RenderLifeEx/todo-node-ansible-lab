@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const TELEGRAM_NAVIGATOR_CHAT_ID = process.env.TELEGRAM_NAVIGATOR_CHAT_ID;
 
 export async function sendTelegramNotification(programName: string): Promise<void> {
     const message = `Запись на программу "${programName}" стала доступна!`;
@@ -9,7 +9,7 @@ export async function sendTelegramNotification(programName: string): Promise<voi
 
     try {
         await axios.post(url, {
-            chat_id: TELEGRAM_CHAT_ID,
+            chat_id: TELEGRAM_NAVIGATOR_CHAT_ID,
             text: message
         });
         console.log(`Notification sent for ${programName}`);
