@@ -55,9 +55,11 @@ pnpm run studio
 pnpm run seed
 
 # Запуск приложения в дев режиме
+nvm use 20
 pnpm run dev
 
 # Запуск приложения в прод режиме
+nvm use 20
 pnpm run start
 ```
 
