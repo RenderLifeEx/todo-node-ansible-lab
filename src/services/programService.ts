@@ -1,6 +1,6 @@
 import axios from "axios";
 import cron from "node-cron";
-import { programs, Program } from "../models/program";
+import { programs, Program } from "../models/program26";
 import { sendTelegramNotification } from "./telegramService";
 
 async function checkProgramAvailability(program: Program): Promise<void> {
